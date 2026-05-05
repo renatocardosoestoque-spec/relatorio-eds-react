@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
@@ -9,14 +9,12 @@ import { TabelaRelatorio } from './components/TabelaRelatorio';
 import { usePersistencia } from './hooks/usePersistencia';
 
 function App() {
-  // Estado principal
   const [periodo, setPeriodo] = usePersistencia('periodoEDS', { inicio: null, fim: null, vendedor: '' });
   const [registros, setRegistros] = usePersistencia('registrosEDS', []);
   const [kmInicial, setKmInicial] = usePersistencia('kmInicialEDS', '');
   const [kmFinal, setKmFinal] = usePersistencia('kmFinalEDS', '');
   const [cards, setCards] = useState([]);
 
-  // Funções auxiliares
   const formatDateBR = (dateISO) => {
     if (!dateISO) return '';
     const [year, month, day] = dateISO.split('-');
@@ -36,7 +34,7 @@ function App() {
     return dias[d.getDay()];
   };
 
-  const validarPeriodo = (inicioBR, fimBR) => {
+  const definirPeriodo = (inicioBR, fimBR) => {
     if (!inicioBR || !fimBR) {
       Swal.fire({ icon: 'error', title: 'Datas incompletas', text: 'Selecione as duas datas usando o calendário.' });
       return false;
@@ -73,8 +71,7 @@ function App() {
       Swal.fire({ icon: 'error', title: 'KM inválido', text: 'KM Final não pode ser menor que o KM Inicial.' });
       return;
     }
-    const id = Date.now();
-    setCards([...cards, id]);
+    setCards([...cards, Date.now()]);
   };
 
   const removerCard = (id) => {
@@ -189,7 +186,7 @@ function App() {
       </div>
 
       <div className="form-panel">
-        <PeriodoForm periodo={periodo} setPeriodo={setPeriodo} onDefinirPeriodo={validarPeriodo} />
+        <PeriodoForm periodo={periodo} setPeriodo={setPeriodo} onDefinirPeriodo={definirPeriodo} />
         <KmForm kmInicial={kmInicial} kmFinal={kmFinal} setKmInicial={setKmInicial} setKmFinal={setKmFinal} />
         <div className="status-badge" style={{ marginTop: '16px' }}>
           {periodo.inicio && periodo.fim ? `📅 Período ativo: ${formatDateBR(periodo.inicio)} (${getDiaSemana(periodo.inicio)}) até ${formatDateBR(periodo.fim)} (${getDiaSemana(periodo.fim)})` : '⏳ Nenhum período definido'}
