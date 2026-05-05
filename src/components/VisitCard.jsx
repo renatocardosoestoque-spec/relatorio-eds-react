@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
-import Swal from 'sweetalert2';
+import React, { useState, useEffect } from 'react';
 import { useMunicipios } from '../hooks/useMunicipios';
 import { municipiosRS } from '../lib/municipios';
 
@@ -10,22 +9,14 @@ export function VisitCard({ vendedor, periodo, onSave, onCancel }) {
   const [dataVisita, setDataVisita] = useState('');
   const [motivo, setMotivo] = useState('');
   const [descricao, setDescricao] = useState('');
-  const [mostrarDescricao, setMostrarDescricao] = useState(false);
   const [error, setError] = useState('');
 
   const { inputRef, suggestions, showSuggestions, handleInput, selectCity } = useMunicipios();
 
-  // Funções auxiliares (formato de data, validação)
   const formatDateBR = (dateISO) => {
     if (!dateISO) return '';
     const [year, month, day] = dateISO.split('-');
     return `${day}/${month}/${year}`;
-  };
-
-  const parseDateBR = (dateBR) => {
-    const partes = dateBR.split('/');
-    if (partes.length !== 3) return null;
-    return `${partes[2]}-${partes[1]}-${partes[0]}`;
   };
 
   const getDiaSemana = (dateISO) => {
@@ -77,7 +68,7 @@ export function VisitCard({ vendedor, periodo, onSave, onCancel }) {
   };
 
   useEffect(() => {
-    setMostrarDescricao(motivo === 'Outro');
+    if (motivo === 'Outro') setError('');
   }, [motivo]);
 
   return (
@@ -117,7 +108,7 @@ export function VisitCard({ vendedor, periodo, onSave, onCancel }) {
         </div>
         <div className="field">
           <label>📅 DATA VISITA *</label>
-          <input type="date" value={dataVisita} onChange={(e) => setDataVisita(e.target.value)} className="data-visita-iso" />
+          <input type="date" value={dataVisita} onChange={(e) => setDataVisita(e.target.value)} />
         </div>
         <div className="field">
           <label>📌 MOTIVO *</label>
@@ -129,7 +120,7 @@ export function VisitCard({ vendedor, periodo, onSave, onCancel }) {
             <option value="Outro">Outro</option>
           </select>
         </div>
-        {mostrarDescricao && (
+        {motivo === 'Outro' && (
           <div className="field">
             <label>✏️ DESCRIÇÃO (Outro)</label>
             <textarea rows="2" value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Descreva detalhes..."></textarea>
@@ -140,7 +131,7 @@ export function VisitCard({ vendedor, periodo, onSave, onCancel }) {
         <button className="btn-cancelar" onClick={onCancel}>Cancelar</button>
         <button className="btn-salvar" onClick={handleSalvar}>💾 Salvar visita</button>
       </div>
-      {error && <div className="card-error" style={{ color: '#b33', fontSize: '0.7rem', marginTop: '8px' }}>{error}</div>}
+      {error && <div style={{ color: '#b33', fontSize: '0.7rem', marginTop: '8px' }}>{error}</div>}
     </div>
   );
 }
