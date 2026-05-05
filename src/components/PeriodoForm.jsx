@@ -19,11 +19,6 @@ export function PeriodoForm({ periodo, setPeriodo, onDefinirPeriodo }) {
   const handleConfirmar = () => {
     const inicioBR = inicioRef.current.value;
     const fimBR = fimRef.current.value;
-    if (!inicioBR || !fimBR) {
-      // O alerta será exibido no App
-      onDefinirPeriodo(inicioBR, fimBR);
-      return;
-    }
     onDefinirPeriodo(inicioBR, fimBR);
   };
 
